@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Pemantauan Penyelia KKM</title>
+    <!-- Tailwind CSS untuk rekaan pantas & moden -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js untuk graf/carta -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- FontAwesome untuk Ikon -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: #f3f4f6;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <!-- Header -->
+    <header class="bg-blue-900 text-white shadow-md py-4 px-6 flex justify-between items-center">
+        <div>
+            <h1 class="text-2xl font-bold"><i class="fas fa-hospital-user mr-2"></i>Papan Pemuka Eksekutif KKM</h1>
+            <p class="text-sm text-blue-200">Pemantauan Prestasi Unit Pembangunan, Aduan & Penyelenggaraan</p>
+        </div>
+        <div class="text-sm font-semibold bg-blue-800 px-4 py-2 rounded-lg">
+            Dikemas kini: Hari ini
+        </div>
+    </header>
+
+    <main class="p-6 max-w-7xl mx-auto space-y-6">
+        
+        <!-- Kad KPI Utama -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- KPI 1 -->
+            <div class="bg-white rounded-xl shadow p-6 border-l-4 border-blue-500">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <p class="text-sm text-gray-500 font-semibold mb-1">JUMLAH KES / TUGASAN</p>
+                        <h2 class="text-3xl font-bold text-gray-800">4</h2>
+                    </div>
+                    <div class="bg-blue-100 p-3 rounded-full text-blue-600">
+                        <i class="fas fa-folder-open fa-lg"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- KPI 2 -->
+            <div class="bg-white rounded-xl shadow p-6 border-l-4 border-green-500">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <p class="text-sm text-gray-500 font-semibold mb-1">KADAR PENYELESAIAN</p>
+                        <h2 class="text-3xl font-bold text-gray-800">25%</h2>
+                    </div>
+                    <div class="bg-green-100 p-3 rounded-full text-green-600">
+                        <i class="fas fa-check-circle fa-lg"></i>
+                    </div>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2 mt-4">
+                    <div class="bg-green-500 h-2 rounded-full" style="width: 25%"></div>
+                </div>
+            </div>
+
+            <!-- KPI 3 -->
+            <div class="bg-white rounded-xl shadow p-6 border-l-4 border-yellow-500">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <p class="text-sm text-gray-500 font-semibold mb-1">DALAM TINDAKAN</p>
+                        <h2 class="text-3xl font-bold text-gray-800">3</h2>
+                    </div>
+                    <div class="bg-yellow-100 p-3 rounded-full text-yellow-600">
+                        <i class="fas fa-spinner fa-lg"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KPI 4 -->
+            <div class="bg-white rounded-xl shadow p-6 border-l-4 border-red-500 animate-pulse">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <p class="text-sm text-gray-500 font-semibold mb-1">AMARAN LEWAT SLA</p>
+                        <h2 class="text-3xl font-bold text-red-600">1</h2>
+                    </div>
+                    <div class="bg-red-100 p-3 rounded-full text-red-600">
+                        <i class="fas fa-exclamation-triangle fa-lg"></i>
+                    </div>
+                </div>
+                <p class="text-xs text-red-500 mt-2 font-semibold">Tugasan #3 (Laporan Kehadiran)</p>
+            </div>
+        </div>
+
+        <!-- Ruangan Carta -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Carta Bar: Prestasi Kategori -->
+            <div class="bg-white rounded-xl shadow p-6">
+                <h3 class="text-lg font-bold text-gray-700 mb-4 border-b pb-2">Prestasi Mengikut Kategori</h3>
+                <canvas id="barChart" height="250"></canvas>
+            </div>
+            
+            <!-- Carta Doughnut: Status Semasa -->
+            <div class="bg-white rounded-xl shadow p-6">
+                <h3 class="text-lg font-bold text-gray-700 mb-4 border-b pb-2">Pecahan Status Tugasan</h3>
+                <div class="flex justify-center">
+                    <canvas id="pieChart" height="250" style="max-height: 250px;"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Jadual Data (Log Pemantauan) -->
+        <div class="bg-white rounded-xl shadow p-6 overflow-hidden">
+            <div class="flex justify-between items-center mb-4 border-b pb-2">
+                <h3 class="text-lg font-bold text-gray-700">Log Pemantauan Terkini</h3>
+                <button onclick="window.print()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded shadow text-sm font-semibold transition">
+                    <i class="fas fa-print mr-1"></i> Cetak / PDF
+                </button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-50 text-gray-600 text-sm uppercase">
+                            <th class="py-3 px-4 border-b font-semibold">No</th>
+                            <th class="py-3 px-4 border-b font-semibold">Kategori</th>
+                            <th class="py-3 px-4 border-b font-semibold">Lokasi / Unit</th>
+                            <th class="py-3 px-4 border-b font-semibold">Staf Bertugas</th>
+                            <th class="py-3 px-4 border-b font-semibold">Tarikh SLA</th>
+                            <th class="py-3 px-4 border-b font-semibold text-center">Status Semasa</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm">
+                        <!-- Baris 1 -->
+                        <tr class="hover:bg-gray-50 border-b">
+                            <td class="py-3 px-4">1</td>
+                            <td class="py-3 px-4 font-semibold text-blue-600">Aduan Awam</td>
+                            <td class="py-3 px-4">KK Guar Chempedak</td>
+                            <td class="py-3 px-4">Dr. Suriani / CC Zamani</td>
+                            <td class="py-3 px-4 text-green-600 font-semibold">17 Nov 2026</td>
+                            <td class="py-3 px-4 text-center">
+                                <span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-bold">Dalam Tindakan</span>
+                            </td>
+                        </tr>
+                        <!-- Baris 2 -->
+                        <tr class="hover:bg-gray-50 border-b">
+                            <td class="py-3 px-4">2</td>
+                            <td class="py-3 px-4 font-semibold text-blue-600">Aduan Awam</td>
+                            <td class="py-3 px-4">KK Guar Chempedak</td>
+                            <td class="py-3 px-4">Dr Melissa / En Mustapha</td>
+                            <td class="py-3 px-4 text-green-600 font-semibold">18 Nov 2026</td>
+                            <td class="py-3 px-4 text-center">
+                                <span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-bold">Dalam Tindakan</span>
+                            </td>
+                        </tr>
+                        <!-- Baris 3 -->
+                        <tr class="hover:bg-red-50 border-b bg-red-50/30">
+                            <td class="py-3 px-4">3</td>
+                            <td class="py-3 px-4 font-semibold text-purple-600">Laporan Kehadiran</td>
+                            <td class="py-3 px-4">Unit Pentadbiran</td>
+                            <td class="py-3 px-4">En. Kumar</td>
+                            <td class="py-3 px-4 text-red-600 font-bold">10 Nov 2026 <i class="fas fa-exclamation-circle"></i></td>
+                            <td class="py-3 px-4 text-center">
+                                <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-bold">Lewat SLA</span>
+                            </td>
+                        </tr>
+                        <!-- Baris 4 -->
+                        <tr class="hover:bg-gray-50 border-b">
+                            <td class="py-3 px-4">4</td>
+                            <td class="py-3 px-4 font-semibold text-orange-600">Pembangunan</td>
+                            <td class="py-3 px-4">Unit Pembangunan</td>
+                            <td class="py-3 px-4">CC Azlina Binti Ariffin</td>
+                            <td class="py-3 px-4">15 Nov 2026</td>
+                            <td class="py-3 px-4 text-center">
+                                <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold">Selesai</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Skrip untuk Carta (Chart.js) -->
+    <script>
+        // Data Carta Bar
+        const ctxBar = document.getElementById('barChart').getContext('2d');
+        new Chart(ctxBar, {
+            type: 'bar',
+            data: {
+                labels: ['Aduan Awam', 'Laporan', 'Selenggara Telefon', 'Pembangunan'],
+                datasets: [
+                    {
+                        label: 'Jumlah Kes',
+                        data: [2, 1, 0, 1],
+                        backgroundColor: '#3b82f6',
+                        borderRadius: 4
+                    },
+                    {
+                        label: 'Selesai',
+                        data: [0, 0, 0, 1],
+                        backgroundColor: '#10b981',
+                        borderRadius: 4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                }
+            }
+        });
+
+        // Data Carta Doughnut
+        const ctxPie = document.getElementById('pieChart').getContext('2d');
+        new Chart(ctxPie, {
+            type: 'doughnut',
+            data: {
+                labels: ['Dalam Tindakan', 'Selesai', 'Lewat SLA'],
+                datasets: [{
+                    data: [2, 1, 1],
+                    backgroundColor: ['#f59e0b', '#10b981', '#ef4444'],
+                    borderWidth: 2,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
